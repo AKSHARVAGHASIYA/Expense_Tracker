@@ -1,0 +1,18 @@
+:root {
+  --navbar-bg: #2c3e50;
+  --navbar-text: #ecf0f1;
+  --page-bg: #f8f9fa;
+  --accent-color: #27ae60;
+  --text-color: #34495e;
+}
+
+.body{
+    background-color: var(--page-bg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.navbar{
+    position: fixed;
+    width: 100%;
+}

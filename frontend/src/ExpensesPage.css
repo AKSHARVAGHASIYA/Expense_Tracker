@@ -1,0 +1,205 @@
+.expenses-page {
+  --bg-color: #f4f7f9;
+  --text-color: #34495e;
+  --text-light-color: #7f8c8d;
+  --accent-color: #3498db;
+  --accent-color-dark: #2980b9;
+  --success-color: #27ae60;
+  --success-color-dark: #229954;
+  --card-bg: #ffffff;
+  --shadow-color: rgba(44, 62, 80, 0.08);
+  --border-color: #e9ecef;
+  --danger-color: #e74c3c;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  padding-top: 2rem;
+}
+
+/* PAGE CONTAINER */
+.expenses-page .page-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+/* HEADER */
+.expenses-page .page-header {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+}
+
+/* CARD */
+.expenses-page .card {
+  background-color: var(--card-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px var(--shadow-color);
+  border: 1px solid var(--border-color);
+}
+
+/* EXPENSES HEADER */
+.expenses-page .expenses-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* BUTTONS */
+.expenses-page .add-expense-btn {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.expenses-page .add-expense-btn:hover {
+  background-color: var(--accent-color-dark);
+}
+
+/* FILTER BAR */
+.expenses-page .filter-bar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 1.5rem;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-color);
+}
+
+.expenses-page .filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.expenses-page .filter-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-light-color);
+}
+
+.expenses-page .filter-group input,
+.expenses-page .filter-group select {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 1rem;
+  min-width: 150px;
+}
+
+.expenses-page .apply-btn {
+  background-color: var(--success-color);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: auto;
+  transition: background-color 0.3s ease;
+}
+
+.expenses-page .apply-btn:hover {
+  background-color: var(--success-color-dark);
+}
+
+/* TABLE */
+.expenses-page .expense-list-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.expenses-page .expense-list-table th,
+.expenses-page .expense-list-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.expenses-page .expense-list-table th {
+  font-size: 0.9rem;
+  color: var(--text-light-color);
+  text-transform: uppercase;
+}
+
+.expenses-page .expense-list-table td {
+  font-size: 1rem;
+}
+
+.expenses-page .expense-action-link {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 600;
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+.expenses-page .expense-action-link.delete {
+  color: var(--danger-color);
+}
+
+/* PAGINATION */
+.expenses-page .pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.expenses-page .pagination-nav button,
+.expenses-page .pagination-pages button {
+  background: none;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.expenses-page .pagination-nav button:hover,
+.expenses-page .pagination-pages button:hover {
+  background-color: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+.expenses-page .pagination-pages {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.expenses-page .pagination-pages button.active {
+  background-color: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .expenses-page .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .expenses-page .apply-btn {
+    margin-left: 0;
+    margin-top: 1rem;
+  }
+}
