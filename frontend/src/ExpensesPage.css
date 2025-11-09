@@ -1,205 +1,187 @@
 .expenses-page {
-  --bg-color: #f4f7f9;
-  --text-color: #34495e;
-  --text-light-color: #7f8c8d;
-  --accent-color: #3498db;
-  --accent-color-dark: #2980b9;
-  --success-color: #27ae60;
-  --success-color-dark: #229954;
-  --card-bg: #ffffff;
-  --shadow-color: rgba(44, 62, 80, 0.08);
-  --border-color: #e9ecef;
-  --danger-color: #e74c3c;
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+  color: #f5f5f5;
   min-height: 100vh;
   padding-top: 2rem;
+  font-family: "Poppins", sans-serif;
 }
 
-/* PAGE CONTAINER */
-.expenses-page .page-container {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 2rem;
-}
-
-/* HEADER */
-.expenses-page .page-header {
-  font-size: 2.2rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: #2c3e50;
-}
-
-/* CARD */
-.expenses-page .card {
-  background-color: var(--card-bg);
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px var(--shadow-color);
-  border: 1px solid var(--border-color);
-}
-
-/* EXPENSES HEADER */
-.expenses-page .expenses-header {
+/* Header */
+.expenses-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
 }
 
-/* BUTTONS */
-.expenses-page .add-expense-btn {
-  background-color: var(--accent-color);
-  color: white;
+.page-header {
+  font-size: 2rem;
+  color: #ffd700;
+  font-weight: 700;
+}
+
+.add-expense-btn {
+  background: #ffd700;
+  color: #111;
   border: none;
-  padding: 0.7rem 1.2rem;
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: 10px 16px;
   font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: background-color 0.3s ease;
+  transition: 0.3s;
+  margin: 10px;
 }
 
-.expenses-page .add-expense-btn:hover {
-  background-color: var(--accent-color-dark);
+.add-expense-btn:hover {
+  background: #ffea70;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
 }
 
-/* FILTER BAR */
-.expenses-page .filter-bar {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  padding: 1.5rem;
-  background-color: var(--card-bg);
+/* Filter Section */
+.filter-bar {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.1);
+  padding: 1rem;
   border-radius: 12px;
   margin-bottom: 2rem;
-  border: 1px solid var(--border-color);
 }
 
-.expenses-page .filter-group {
+.filter-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  width: 200px;
 }
 
-.expenses-page .filter-group label {
+.filter-group label {
   font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-light-color);
+  color: #ffd700;
+  margin-bottom: 5px;
 }
 
-.expenses-page .filter-group input,
-.expenses-page .filter-group select {
-  padding: 0.6rem 0.8rem;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 1rem;
-  min-width: 150px;
+.filter-group select {
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 8px;
+  padding: 8px;
 }
 
-.expenses-page .apply-btn {
-  background-color: var(--success-color);
-  color: white;
-  border: none;
-  padding: 0.7rem 1.5rem;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  margin-left: auto;
-  transition: background-color 0.3s ease;
+/* Table */
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(255, 215, 0, 0.2);
 }
 
-.expenses-page .apply-btn:hover {
-  background-color: var(--success-color-dark);
-}
-
-/* TABLE */
-.expenses-page .expense-list-table {
+.expense-list-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.expenses-page .expense-list-table th,
-.expenses-page .expense-list-table td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.expenses-page .expense-list-table th {
-  font-size: 0.9rem;
-  color: var(--text-light-color);
+.expense-list-table th {
+  color: #ffd700;
+  background: rgba(255, 255, 255, 0.08);
   text-transform: uppercase;
+  padding: 0.8rem;
 }
 
-.expenses-page .expense-list-table td {
-  font-size: 1rem;
+.expense-list-table td {
+  text-align: center;
+  padding: 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.expenses-page .expense-action-link {
-  color: var(--accent-color);
-  text-decoration: none;
-  font-weight: 600;
-  margin-right: 1rem;
-  cursor: pointer;
+/* Modal Popup */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-.expenses-page .expense-action-link.delete {
-  color: var(--danger-color);
+.modal {
+  background: #111;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 12px;
+  padding: 2rem;
+  width: 400px;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.15);
+  animation: scaleUp 0.3s ease-in-out;
 }
 
-/* PAGINATION */
-.expenses-page .pagination {
+.modal-title {
+  color: #ffd700;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  color: #ffd700;
+  margin-bottom: 6px;
+}
+
+input,
+select {
+  padding: 8px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  color: #fff;
+}
+
+.button-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
   margin-top: 1rem;
 }
 
-.expenses-page .pagination-nav button,
-.expenses-page .pagination-pages button {
-  background: none;
-  border: 1px solid var(--border-color);
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
+.submit-btn {
+  background: #ffd700;
+  color: #111;
   font-weight: 600;
-  transition: all 0.2s;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-.expenses-page .pagination-nav button:hover,
-.expenses-page .pagination-pages button:hover {
-  background-color: var(--accent-color);
-  color: white;
-  border-color: var(--accent-color);
+.submit-btn:hover {
+  background: #ffea70;
 }
 
-.expenses-page .pagination-pages {
-  display: flex;
-  gap: 0.5rem;
+.cancel-btn {
+  background: transparent;
+  border: 1px solid #ffd700;
+  color: #ffd700;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-.expenses-page .pagination-pages button.active {
-  background-color: var(--accent-color);
-  color: white;
-  border-color: var(--accent-color);
+.cancel-btn:hover {
+  background: rgba(255, 215, 0, 0.1);
 }
 
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .expenses-page .filter-bar {
-    flex-direction: column;
-    align-items: stretch;
+@keyframes scaleUp {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
   }
-  .expenses-page .apply-btn {
-    margin-left: 0;
-    margin-top: 1rem;
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
 }

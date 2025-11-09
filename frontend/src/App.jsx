@@ -1,32 +1,29 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-// --- Import your page components ---
-// Make sure the file paths are correct based on your project structure.
+// ✅ Import all your components (make sure paths are correct)
+import './App.css';
 import Navbar from './Navbar.jsx';
 import HomePage from './HomePage.jsx';
 import ExpensesPage from './ExpensesPage.jsx';
-
-// --- Simple placeholder components for the other pages ---
-// You can replace these with your actual page components later.
-const ReportsPage = () => <div style={{textAlign: 'center', marginTop: '50px'}}><h1>Reports Page</h1><p>Content for reports will go here.</p></div>;
-const AboutPage = () => <div style={{textAlign: 'center', marginTop: '50px'}}><h1>About Page</h1><p>Information about the app will go here.</p></div>;
-const LoginPage = () => <div style={{textAlign: 'center', marginTop: '50px'}}><h1>Login Page</h1><p>Login form will go here.</p></div>;
-const SignUpPage = () => <div style={{textAlign: 'center', marginTop: '50px'}}><h1>Sign Up Page</h1><p>Sign up form will go here.</p></div>;
+import Report from './Reports.jsx';
+import About from './About.jsx';
+import LoginPage from './LoginPage.jsx';
+import SignUpPage from './SignUpPage.jsx';
 
 
 function App() {
   return (
     <BrowserRouter>
-      {/* The Navbar will appear on every page because it's outside the <Routes> */}
+      {/* Navbar appears on every page */}
       <Navbar />
-      
-      {/* The Routes component decides which page component to show based on the URL */}
+
+      {/* Page Routes */}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/expenses" element={<ExpensesPage />} />
-        <Route path="/reports" element={<ReportsPage />} />
-        <Route path="/about" element={<AboutPage />} />
+        <Route path="/reports" element={<Report />} />
+        <Route path="/about" element={<About />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
       </Routes>
@@ -35,4 +32,3 @@ function App() {
 }
 
 export default App;
-

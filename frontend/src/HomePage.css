@@ -1,0 +1,267 @@
+/* 🌑 Base Layout */
+.home-page {
+  background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+  color: #f5f5f5;
+  min-height: 100vh;
+  padding: 2rem;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ✨ Header */
+.page-header {
+  text-align: center;
+  color: #ffd700;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+/* 💰 Stats Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 12px;
+  text-align: center;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+}
+
+.stat-title {
+  color: #ffd700;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* 📊 Charts Section */
+.chart-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.chart-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.chart-card:hover {
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.15);
+}
+
+.chart-title {
+  color: #ffd700;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+/* 📈 Bar Chart */
+.bar-chart {
+  height: 220px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 24px;
+  position: relative;
+}
+
+.bar-date {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+/* 🟨 Animated Bar Styling */
+.animated-bar {
+  width: 100%;
+  height: 0;
+  background: linear-gradient(180deg, #ffd700, #ffb700);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+  border-radius: 4px 4px 0 0;
+  animation: growBar 1.2s ease-out forwards;
+  transition: height 0.4s ease, transform 0.2s ease;
+}
+
+.animated-bar:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+@keyframes growBar {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--bar-height);
+  }
+}
+
+/* 🍩 Doughnut Chart */
+.doughnut-chart {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  margin: 1rem auto;
+  position: relative;
+  animation: spinIn 1s ease-out;
+}
+
+@keyframes spinIn {
+  from {
+    transform: rotate(-180deg) scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.doughnut-chart::after {
+  content: "";
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  background: #0f0f0f;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 📋 Legend */
+.legend {
+  list-style: none;
+  margin-top: 1rem;
+  padding: 0;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  margin-right: 0.5rem;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.3);
+}
+
+/* 🧾 Recent Expenses Table */
+.recent-expenses {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.table-title {
+  color: #ffd700;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.expense-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #fff;
+}
+
+.expense-list-table th,
+.expense-list-table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: left;
+}
+
+.expense-list-table th {
+  color: #ffd700;
+  background: rgba(255, 255, 255, 0.08);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.amount-cell {
+  color: #ff4d4d;
+  text-align: right;
+  font-weight: 600;
+}
+
+.no-data {
+  color: #aaa;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* ✨ Fade Animation */
+.fade-in {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📱 Responsive */
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .chart-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .stat-card {
+    padding: 1rem;
+  }
+  .chart-card {
+    padding: 1rem;
+  }
+  .bar-item {
+    width: 14px;
+  }
+}

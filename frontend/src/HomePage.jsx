@@ -1,260 +1,221 @@
-import React, { useState } from 'react';
-
-// All the styles for this component are included here.
-const HomePageStyles = `
-/* Using the same consistent color scheme */
-:root {
-  --navbar-bg: #2c3e50;
-  --navbar-text: #ecf0f1;
-  --accent-color: #3498db; /* Changed to a nice blue for the dashboard */
-  --accent-green: #27ae60;
-  --page-bg: #f4f7f9; /* A slightly cooler background */
-  --text-color: #34495e;
-  --shadow-color: rgba(0, 0, 0, 0.07);
-  --border-color: #e1e8ed;
-  --card-bg: #ffffff;
-}
-
-.homepage-container {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: var(--text-color);
-}
-
-/* --- Main Dashboard Grid Layout --- */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-}
-
-/* --- General Card Styling --- */
-.dashboard-card {
-  background-color: var(--card-bg);
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px var(--shadow-color);
-  border: 1px solid var(--border-color);
-}
-
-.card-title {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #7f8c8d;
-  margin: 0 0 0.5rem 0;
-}
-
-.card-value {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: var(--navbar-bg);
-}
-
-/* --- Sizing for Grid Items --- */
-.summary-card {
-    grid-column: span 1;
-}
-.spending-over-time-card {
-    grid-column: span 3;
-    height: 350px;
-}
-.category-breakdown-card {
-    grid-column: span 1;
-    height: 350px;
-}
-.recent-expenses-card {
-    grid-column: span 4;
-}
-
-/* --- Chart Placeholders --- */
-.bar-chart-placeholder {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-around;
-    height: 80%;
-    width: 100%;
-}
-
-.bar {
-    width: 4%;
-    background-color: var(--accent-color);
-    border-radius: 4px 4px 0 0;
-    animation: bar-grow 1s ease-out forwards;
-}
-
-@keyframes bar-grow {
-    from { height: 0; }
-}
-
-.doughnut-chart-placeholder {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    margin: 2rem auto;
-    background: conic-gradient(
-        var(--accent-color) 0% 60%, 
-        var(--accent-green) 60% 100%
-    );
-    position: relative;
-}
-.doughnut-chart-placeholder::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 70%;
-    height: 70%;
-    background: var(--card-bg);
-    border-radius: 50%;
-}
-
-.legend {
-    list-style: none;
-    padding: 0;
-    text-align: center;
-}
-.legend-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-}
-.legend-color {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin-right: 8px;
-}
-
-
-/* --- Recent Expenses Table --- */
-.expenses-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-}
-.expenses-table th, .expenses-table td {
-    padding: 0.85rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
-}
-.expenses-table th {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    color: #7f8c8d;
-    font-weight: 600;
-}
-.expenses-table td {
-    font-size: 0.95rem;
-}
-.amount-cell {
-    color: #c0392b; /* Red for expenses */
-}
-
-.actions-cell a {
-    color: var(--accent-color);
-    text-decoration: none;
-    margin-right: 10px;
-}
-.actions-cell a:hover {
-    text-decoration: underline;
-}
-
-`;
+import React, { useEffect, useState } from "react";
+import "./HomePage.css";
 
 const HomePage = () => {
-    // Placeholder data for recent expenses
-    const [recentExpenses, setRecentExpenses] = useState([
-        { id: 1, date: '2025-10-11', description: 'Groceries', category: 'Food', amount: 45.90, payment: 'Online' },
-        { id: 2, date: '2025-10-10', description: 'Bus Ticket', category: 'Travel', amount: 12.00, payment: 'Cash' },
-    ]);
+  const [expenses, setExpenses] = useState([]);
+  const [incomes, setIncomes] = useState([]);
+  const [categoryStats, setCategoryStats] = useState({});
+  const [barChartData, setBarChartData] = useState([]);
 
-    // Placeholder data for bar chart heights
-    const barChartData = [60, 40, 75, 50, 85, 55, 90, 70, 45, 80, 30, 70, 60, 40, 50];
+  useEffect(() => {
+    const fetchData = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user) return;
 
-    return (
-        <>
-            <style>{HomePageStyles}</style>
-            <div className="homepage-container">
-                <div className="dashboard-grid">
-                    {/* --- Summary Cards --- */}
-                    <div className="dashboard-card summary-card">
-                        <h3 className="card-title">Total Balance</h3>
-                        <p className="card-value">₹----</p>
-                    </div>
-                    <div className="dashboard-card summary-card">
-                        <h3 className="card-title">This Month Spend</h3>
-                        <p className="card-value">₹----</p>
-                    </div>
-                    <div className="dashboard-card summary-card">
-                        <h3 className="card-title">This Week Spend</h3>
-                        <p className="card-value">₹----</p>
-                    </div>
-                    <div className="dashboard-card summary-card">
-                        <h3 className="card-title">Remaining Budget</h3>
-                        <p className="card-value">₹----</p>
-                    </div>
+      try {
+        const encodedEmail = encodeURIComponent(user.email);
+        const [expRes, incRes] = await Promise.all([
+          fetch(`http://localhost:5001/api/expenses/${encodedEmail}`),
+          fetch(`http://localhost:5001/api/incomes/${encodedEmail}`),
+        ]);
 
-                    {/* --- Spending Over Time Chart --- */}
-                    <div className="dashboard-card spending-over-time-card">
-                        <h3 className="card-title">Spending Over Time (15 Bars)</h3>
-                        <div className="bar-chart-placeholder">
-                            {barChartData.map((height, index) => (
-                                <div key={index} className="bar" style={{ height: `${height}%` }}></div>
-                            ))}
-                        </div>
-                    </div>
+        const expData = await expRes.json();
+        const incData = await incRes.json();
 
-                    {/* --- Category Breakdown Chart --- */}
-                    <div className="dashboard-card category-breakdown-card">
-                        <h3 className="card-title">Category Breakdown</h3>
-                        <div className="doughnut-chart-placeholder"></div>
-                        <ul className="legend">
-                            <li className="legend-item"><span className="legend-color" style={{backgroundColor: 'var(--accent-color)'}}></span>Food — 60%</li>
-                            <li className="legend-item"><span className="legend-color" style={{backgroundColor: 'var(--accent-green)'}}></span>Travel — 40%</li>
-                        </ul>
-                    </div>
-                    
-                    {/* --- Recent Expenses Table --- */}
-                    <div className="dashboard-card recent-expenses-card">
-                        <h3 className="card-title">Recent Expenses</h3>
-                        <table className="expenses-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Description</th>
-                                    <th>Category</th>
-                                    <th>Amount</th>
-                                    <th>Payment</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {recentExpenses.map(expense => (
-                                    <tr key={expense.id}>
-                                        <td>{expense.date}</td>
-                                        <td>{expense.description}</td>
-                                        <td>{expense.category}</td>
-                                        <td className="amount-cell">-₹{expense.amount.toFixed(2)}</td>
-                                        <td>{expense.payment}</td>
-                                        <td className="actions-cell">
-                                            <a href="#">Edit</a>
-                                            <a href="#">Delete</a>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+        setExpenses(expData);
+        setIncomes(incData);
 
-                </div>
-            </div>
-        </>
-    );
+        // Category breakdown
+        const categoryTotals = expData.reduce((acc, exp) => {
+          acc[exp.category] = (acc[exp.category] || 0) + exp.amount;
+          return acc;
+        }, {});
+        setCategoryStats(categoryTotals);
+
+        // Last 15 days data
+        const last15Days = [...Array(15)].map((_, i) => {
+          const date = new Date();
+          date.setDate(date.getDate() - (14 - i));
+          const formatted = `${String(date.getDate()).padStart(2, "0")}/${String(
+            date.getMonth() + 1
+          ).padStart(2, "0")}`;
+          const dateStr = date.toISOString().split("T")[0];
+
+          const total = expData
+            .filter((e) => e.date?.startsWith(dateStr))
+            .reduce((sum, e) => sum + e.amount, 0);
+
+          return { date: formatted, amount: total };
+        });
+        setBarChartData(last15Days);
+      } catch (err) {
+        console.error("Error loading data:", err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const getCategoryColor = (category) => {
+    const colors = {
+      Food: "#3498db",
+      Travel: "#f39c12",
+      Shopping: "#9b59b6",
+      Entertainment: "#e74c3c",
+      Health: "#27ae60",
+      Bills: "#f1c40f",
+      Other: "#95a5a6",
+    };
+    return colors[category] || "#999";
+  };
+
+  // Totals
+  const totalIncome = incomes.reduce((s, i) => s + i.amount, 0);
+  const totalExpense = expenses.reduce((s, e) => s + e.amount, 0);
+  const balance = totalIncome - totalExpense;
+  const thisMonthIncome = incomes
+    .filter((i) => new Date(i.date).getMonth() === new Date().getMonth())
+    .reduce((s, i) => s + i.amount, 0);
+  const thisMonthExpense = expenses
+    .filter((e) => new Date(e.date).getMonth() === new Date().getMonth())
+    .reduce((s, e) => s + e.amount, 0);
+  const thisWeekExpense = expenses
+    .filter((e) => (new Date() - new Date(e.date)) / (1000 * 60 * 60 * 24) <= 7)
+    .reduce((s, e) => s + e.amount, 0);
+
+  const maxExpense = Math.max(...barChartData.map((d) => d.amount || 0), 1);
+
+  return (
+    <div className="home-page fade-in">
+      <h1 className="page-header">📊 Dashboard Overview</h1>
+
+      {/* Stats Section */}
+      <div className="stats-grid">
+        <div className="stat-card">
+          <p className="stat-title">This Month Income</p>
+          <p className="stat-value">₹{thisMonthIncome.toFixed(2)}</p>
+        </div>
+        <div className="stat-card">
+          <p className="stat-title">Total Balance</p>
+          <p className="stat-value">₹{balance.toFixed(2)}</p>
+        </div>
+        <div className="stat-card">
+          <p className="stat-title">This Month Spend</p>
+          <p className="stat-value">₹{thisMonthExpense.toFixed(2)}</p>
+        </div>
+        <div className="stat-card">
+          <p className="stat-title">This Week Spend</p>
+          <p className="stat-value">₹{thisWeekExpense.toFixed(2)}</p>
+        </div>
+      </div>
+
+      {/* Chart Section */}
+      <div className="chart-container">
+        {/* Spending Bar Chart */}
+        <div className="chart-card">
+          <h3 className="chart-title">Spending Over Time (Last 15 Days)</h3>
+          <div className="bar-chart">
+            {barChartData.map((bar, i) => (
+              <div className="bar-item" key={i}>
+                <div
+                  className="bar animated-bar"
+                  style={{
+                    "--bar-height": `${Math.max(
+                      (bar.amount / maxExpense) * 80,
+                      5
+                    )}%`,
+                  }}
+                  title={`₹${bar.amount.toFixed(2)}`}
+                ></div>
+                <span className="bar-date">{bar.date}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Category Breakdown */}
+        <div className="chart-card">
+          <h3 className="chart-title">Category Breakdown</h3>
+          {Object.keys(categoryStats).length ? (
+            <>
+              <div
+                className="doughnut-chart"
+                style={{
+                  background: `conic-gradient(${Object.entries(categoryStats)
+                    .map(([cat, val], idx, arr) => {
+                      const total = Object.values(categoryStats).reduce(
+                        (a, b) => a + b,
+                        0
+                      );
+                      const start = arr
+                        .slice(0, idx)
+                        .reduce((a, [_, v]) => a + (v / total) * 100, 0);
+                      const end = start + (val / total) * 100;
+                      return `${getCategoryColor(cat)} ${start.toFixed(
+                        1
+                      )}% ${end.toFixed(1)}%`;
+                    })
+                    .join(", ")})`,
+                }}
+              ></div>
+              <ul className="legend">
+                {Object.entries(categoryStats).map(([cat, amt], i) => (
+                  <li className="legend-item" key={i}>
+                    <span
+                      className="legend-color"
+                      style={{ backgroundColor: getCategoryColor(cat) }}
+                    ></span>
+                    {cat} — ₹{amt.toFixed(2)}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <p className="no-data">No data available</p>
+          )}
+        </div>
+      </div>
+
+      {/* Recent Expenses */}
+      <div className="recent-expenses">
+        <h3 className="table-title">Recent Expenses</h3>
+        {expenses.length === 0 ? (
+          <p className="no-data">No recent expenses</p>
+        ) : (
+          <table className="expense-list-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Payment</th>
+              </tr>
+            </thead>
+            <tbody>
+              {expenses
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 5)
+                .map((e) => (
+                  <tr key={e._id}>
+                    <td>{e.date}</td>
+                    <td>{e.description}</td>
+                    <td>{e.category}</td>
+                    <td className="amount-cell">-₹{e.amount.toFixed(2)}</td>
+                    <td
+                      style={{
+                        color: e.payment === "Cash" ? "#00ff88" : "#3498db",
+                      }}
+                    >
+                      {e.payment}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default HomePage;

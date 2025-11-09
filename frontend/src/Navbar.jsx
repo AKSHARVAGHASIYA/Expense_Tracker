@@ -1,26 +1,59 @@
-import React from "react";
-import './Navbar.css';
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "./Navbar.css";
 
 const Navbar = () => {
-    return (
-        <div className="navbar-wrapper"> 
-            <nav className="navbar-container">
-              {/* Left side items */}
-              <span className="logo">Expense Tracker</span>
-              <a href="/">Home</a>
-              <a href="/expenses">Expenses</a>
-              <a href="/reports">Reports</a>
-              <a href="/about">About</a>
-  
-              {/* This div is the key. The 'margin-left: auto' pushes it to the right. */}
-              <div className="nav-buttons">
-                  {/* I've added a class to the login button for individual styling if needed */}
-                  <button className="nav-btn">Login</button>
-                  {/* The accent button stands out */}
-                  <button className="nav-btn nav-btn-accent">Sign Up</button>
-              </div>
-            </nav>
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  // 🧩 Check if user is logged in
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  // 🧩 Handle Logout
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    navigate("/login");
+  };
+
+  return (
+    <div className="navbar-wrapper">
+      <nav className="navbar-container">
+        <span className="logo">Expense Tracker</span>
+
+        {/* Navigation links */}
+        <Link to="/">Home</Link>
+        <Link to="/expenses">Expenses</Link>
+        <Link to="/reports">Reports</Link>
+        <Link to="/about">About</Link>
+
+        <div className="nav-buttons">
+          {user ? (
+            <>
+              <span className="welcome-text">👋 Hi, {user.name}</span>
+              <button className="nav-btn nav-btn-logout" onClick={handleLogout}>
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login">
+                <button className="nav-btn">Login</button>
+              </Link>
+              <Link to="/signup">
+                <button className="nav-btn nav-btn-accent">Sign Up</button>
+              </Link>
+            </>
+          )}
         </div>
-    );
+      </nav>
+    </div>
+  );
 };
+
 export default Navbar;
