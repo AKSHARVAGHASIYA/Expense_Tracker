@@ -15,8 +15,8 @@ const HomePage = () => {
       try {
         const encodedEmail = encodeURIComponent(user.email);
         const [expRes, incRes] = await Promise.all([
-          fetch(`http://localhost:5001/api/expenses/${encodedEmail}`),
-          fetch(`http://localhost:5001/api/incomes/${encodedEmail}`),
+          fetch(`http://localhost:8080/api/expenses/${encodedEmail}`),
+          fetch(`http://localhost:8080/api/incomes/${encodedEmail}`),
         ]);
 
         const expData = await expRes.json();
@@ -41,12 +41,17 @@ const HomePage = () => {
           ).padStart(2, "0")}`;
           const dateStr = date.toISOString().split("T")[0];
 
+          // Accept both "YYYY-MM-DD" and "YYYY-MM-DDTHH:mm:ss.sssZ"
           const total = expData
-            .filter((e) => e.date?.startsWith(dateStr))
+            .filter((e) => {
+              if (!e.date) return false;
+              return e.date.startsWith(dateStr);
+            })
             .reduce((sum, e) => sum + e.amount, 0);
 
           return { date: formatted, amount: total };
         });
+        console.log("Bar chart data:", last15Days, "Expenses:", expData);
         setBarChartData(last15Days);
       } catch (err) {
         console.error("Error loading data:", err);
@@ -119,10 +124,9 @@ const HomePage = () => {
                 <div
                   className="bar animated-bar"
                   style={{
-                    "--bar-height": `${Math.max(
-                      (bar.amount / maxExpense) * 80,
-                      5
-                    )}%`,
+                    height: bar.amount === 0
+                      ? '8px'
+                      : `${Math.max((bar.amount / maxExpense) * 220, 8)}px`,
                   }}
                   title={`₹${bar.amount.toFixed(2)}`}
                 ></div>

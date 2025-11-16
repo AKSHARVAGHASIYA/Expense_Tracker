@@ -2,39 +2,31 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+
 const authRoutes = require("./routes/authRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const incomeRoutes = require("./routes/incomeRoutes");
+const reportRoutes = require("./routes/reportRoutes");
 
 dotenv.config();
 const app = express();
 
-// ✅ Enable CORS safely (no wildcard)
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-
-// ✅ Express middleware
+// Middleware
+app.use(cors());
 app.use(express.json());
 
-
-
-// ✅ Routes
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/incomes", incomeRoutes);
+app.use("/api/reports", reportRoutes);
 
-
-// ✅ MongoDB connection
+// MongoDB connect
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
+  .catch((err) => console.log("❌ DB error:", err));
 
-// ✅ Start server
+// Server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

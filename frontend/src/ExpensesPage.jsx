@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./ExpensesPage.css";
+import api from "./api"; // Axios instance
 
 const ExpensesPage = () => {
   const [expenses, setExpenses] = useState([]);
@@ -28,7 +29,7 @@ const ExpensesPage = () => {
     payment: "Cash",
   });
 
-  // 🧩 Fetch both expenses and incomes once
+  // 🧩 Fetch both expenses and incomes
   useEffect(() => {
     const fetchData = async () => {
       const user = JSON.parse(localStorage.getItem("user"));
@@ -37,15 +38,12 @@ const ExpensesPage = () => {
       try {
         const encodedEmail = encodeURIComponent(user.email);
         const [expRes, incRes] = await Promise.all([
-          fetch(`http://localhost:5001/api/expenses/${encodedEmail}`),
-          fetch(`http://localhost:5001/api/incomes/${encodedEmail}`),
+          api.get(`/expenses/${encodedEmail}`),
+          api.get(`/incomes/${encodedEmail}`),
         ]);
 
-        const expData = await expRes.json();
-        const incData = await incRes.json();
-
-        setExpenses(expData);
-        setIncomes(incData);
+        setExpenses(expRes.data);
+        setIncomes(incRes.data);
       } catch (error) {
         console.error("❌ Error fetching data:", error);
       }
@@ -63,28 +61,15 @@ const ExpensesPage = () => {
   // 🧮 Summary Calculations
   const totalExpense = expenses.reduce((sum, exp) => sum + exp.amount, 0);
   const totalIncome = incomes.reduce((sum, inc) => sum + inc.amount, 0);
-
-  const cashIncome = incomes
-    .filter((inc) => inc.payment === "Cash")
-    .reduce((sum, inc) => sum + inc.amount, 0);
-
-  const onlineIncome = incomes
-    .filter((inc) => inc.payment === "Online")
-    .reduce((sum, inc) => sum + inc.amount, 0);
-
-  const cashExpense = expenses
-    .filter((exp) => exp.payment === "Cash")
-    .reduce((sum, exp) => sum + exp.amount, 0);
-
-  const onlineExpense = expenses
-    .filter((exp) => exp.payment === "Online")
-    .reduce((sum, exp) => sum + exp.amount, 0);
-
+  const cashIncome = incomes.filter((i) => i.payment === "Cash").reduce((s, i) => s + i.amount, 0);
+  const onlineIncome = incomes.filter((i) => i.payment === "Online").reduce((s, i) => s + i.amount, 0);
+  const cashExpense = expenses.filter((e) => e.payment === "Cash").reduce((s, e) => s + e.amount, 0);
+  const onlineExpense = expenses.filter((e) => e.payment === "Online").reduce((s, e) => s + e.amount, 0);
   const cashBalance = cashIncome - cashExpense;
   const onlineBalance = onlineIncome - onlineExpense;
   const balance = totalIncome - totalExpense;
 
-  // 🧩 Add or Edit Expense
+  // 🧩 Add / Edit Expense
   const handleAddOrEditExpense = async () => {
     if (!newExpense.date || !newExpense.amount || !newExpense.description) {
       alert("Please fill all fields");
@@ -97,69 +82,44 @@ const ExpensesPage = () => {
       return;
     }
 
-    if (isEditing) {
-      try {
-        const res = await fetch(
-          `http://localhost:5001/api/expenses/update/${editId}`,
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newExpense),
-          }
+    try {
+      if (isEditing) {
+        const { data } = await api.put(`/expenses/update/${editId}`, newExpense);
+        alert("✅ Expense updated successfully!");
+        setExpenses((prev) =>
+          prev.map((exp) => (exp._id === editId ? data.expense : exp))
         );
-        const data = await res.json();
-        if (res.ok) {
-          alert("✅ Expense updated successfully!");
-          setExpenses(
-            expenses.map((exp) => (exp._id === editId ? data.expense : exp))
-          );
-          setShowForm(false);
-          setIsEditing(false);
-          setEditId(null);
-        } else {
-          alert(`❌ ${data.message}`);
-        }
-      } catch (err) {
-        console.error("Error updating expense:", err);
+      } else {
+        const expenseData = {
+          userEmail: user.email,
+          date: newExpense.date,
+          amount: parseFloat(newExpense.amount),
+          category: newExpense.category,
+          description: newExpense.description,
+          payment: newExpense.payment,
+        };
+        const { data } = await api.post("/expenses/add", expenseData);
+        alert("✅ Expense added successfully!");
+        setExpenses((prev) => [...prev, data.expense]);
       }
-    } else {
-      const expenseData = {
-        userEmail: user.email,
-        date: newExpense.date,
-        amount: parseFloat(newExpense.amount),
-        category: newExpense.category,
-        description: newExpense.description,
-        payment: newExpense.payment,
-      };
 
-      try {
-        const res = await fetch("http://localhost:5001/api/expenses/add", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(expenseData),
-        });
-        const data = await res.json();
-        if (res.ok) {
-          alert("✅ Expense added successfully!");
-          setExpenses([...expenses, data.expense]);
-          setShowForm(false);
-        } else {
-          alert(`❌ ${data.message}`);
-        }
-      } catch (error) {
-        console.error("Error adding expense:", error);
-      }
+      setShowForm(false);
+      setIsEditing(false);
+      setEditId(null);
+      setNewExpense({
+        date: "",
+        amount: "",
+        category: "Food",
+        description: "",
+        payment: "Cash",
+      });
+    } catch (error) {
+      console.error("❌ Error adding/updating expense:", error);
+      alert("⚠️ Something went wrong while saving expense.");
     }
-
-    setNewExpense({
-      date: "",
-      amount: "",
-      category: "Food",
-      description: "",
-      payment: "Cash",
-    });
   };
 
+  // 🧩 Add / Edit Income
   const handleAddIncome = async () => {
     if (!newIncome.date || !newIncome.amount || !newIncome.source) {
       alert("Please fill all fields");
@@ -172,134 +132,79 @@ const ExpensesPage = () => {
       return;
     }
 
-    if (isEditingIncome) {
-      try {
-        const res = await fetch(
-          `http://localhost:5001/api/incomes/update/${editIncomeId}`,
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newIncome),
-          }
+    try {
+      if (isEditingIncome) {
+        const { data } = await api.put(`/incomes/update/${editIncomeId}`, newIncome);
+        alert("✅ Income updated successfully!");
+        setIncomes((prev) =>
+          prev.map((inc) => (inc._id === editIncomeId ? data.income : inc))
         );
-
-        const data = await res.json();
-        if (res.ok) {
-          alert("✅ Income updated successfully!");
-          setIncomes(
-            incomes.map((inc) => (inc._id === editIncomeId ? data.income : inc))
-          );
-          setIsEditingIncome(false);
-          setEditIncomeId(null);
-          setShowIncomeForm(false);
-        } else {
-          alert(`❌ ${data.message}`);
-        }
-      } catch (error) {
-        console.error("Error updating income:", error);
+      } else {
+        const incomeData = {
+          userEmail: user.email,
+          date: newIncome.date,
+          amount: parseFloat(newIncome.amount),
+          source: newIncome.source,
+          description: newIncome.description,
+          payment: newIncome.payment,
+        };
+        const { data } = await api.post("/incomes/add", incomeData);
+        alert("✅ Income added successfully!");
+        setIncomes((prev) => [...prev, data.income]);
       }
-    } else {
-      const incomeData = {
-        userEmail: user.email,
-        date: newIncome.date,
-        amount: parseFloat(newIncome.amount),
-        source: newIncome.source,
-        description: newIncome.description,
-        payment: newIncome.payment,
-      };
 
-      try {
-        const res = await fetch("http://localhost:5001/api/incomes/add", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(incomeData),
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-          alert("✅ Income added successfully!");
-          setIncomes([...incomes, data.income]);
-          setShowIncomeForm(false);
-        } else {
-          alert(`❌ ${data.message}`);
-        }
-      } catch (error) {
-        console.error("Error adding income:", error);
-      }
-    }
-
-    setNewIncome({
-      date: "",
-      amount: "",
-      source: "",
-      description: "",
-      payment: "Cash",
-    });
-  };
-
-  const handleEditIncome = (income) => {
-    setNewIncome({
-      date: income.date,
-      amount: income.amount,
-      source: income.source,
-      description: income.description,
-      payment: income.payment,
-    });
-    setShowIncomeForm(true);
-    setIsEditingIncome(true);
-    setEditIncomeId(income._id);
-  };
-
-  const handleDeleteIncome = async (id) => {
-    if (window.confirm("Are you sure you want to delete this income?")) {
-      try {
-        const res = await fetch(
-          `http://localhost:5001/api/incomes/delete/${id}`,
-          {
-            method: "DELETE",
-          }
-        );
-
-        if (res.ok) {
-          setIncomes(incomes.filter((inc) => inc._id !== id));
-          alert("✅ Income deleted successfully!");
-        } else {
-          alert("❌ Failed to delete income");
-        }
-      } catch (error) {
-        console.error("Error deleting income:", error);
-      }
+      setShowIncomeForm(false);
+      setIsEditingIncome(false);
+      setEditIncomeId(null);
+      setNewIncome({
+        date: "",
+        amount: "",
+        source: "",
+        description: "",
+        payment: "Cash",
+      });
+    } catch (error) {
+      console.error("❌ Error adding/updating income:", error);
+      alert("⚠️ Something went wrong while saving income.");
     }
   };
 
-  const handleEdit = (exp) => {
-    setNewExpense({
-      date: exp.date,
-      amount: exp.amount,
-      category: exp.category,
-      description: exp.description,
-      payment: exp.payment,
-    });
-    setShowForm(true);
-    setIsEditing(true);
-    setEditId(exp._id);
-  };
-
+  // 🧩 Delete handlers
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this expense?")) return;
     try {
-      const res = await fetch(
-        `http://localhost:5001/api/expenses/delete/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
-      if (res.ok) {
-        setExpenses(expenses.filter((exp) => exp._id !== id));
-      }
+      await api.delete(`/expenses/delete/${id}`);
+      setExpenses((prev) => prev.filter((e) => e._id !== id));
+      alert("✅ Expense deleted successfully!");
     } catch (error) {
       console.error("Error deleting expense:", error);
     }
+  };
+
+  const handleDeleteIncome = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this income?")) return;
+    try {
+      await api.delete(`/incomes/delete/${id}`);
+      setIncomes((prev) => prev.filter((i) => i._id !== id));
+      alert("✅ Income deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting income:", error);
+    }
+  };
+
+  // 🧩 Edit setup
+  const handleEdit = (exp) => {
+    setNewExpense(exp);
+    setIsEditing(true);
+    setEditId(exp._id);
+    setShowForm(true);
+  };
+
+  const handleEditIncome = (inc) => {
+    setNewIncome(inc);
+    setIsEditingIncome(true);
+    setEditIncomeId(inc._id);
+    setShowIncomeForm(true);
   };
 
   return (
@@ -362,29 +267,13 @@ const ExpensesPage = () => {
                 <td style={{ color: "#FFD700", fontWeight: "700" }}>
                   Balance Available
                 </td>
-                <td
-                  style={{
-                    color: cashBalance >= 0 ? "#00FF88" : "#FF5555",
-                    fontWeight: "600",
-                  }}
-                >
+                <td style={{ color: cashBalance >= 0 ? "#00FF88" : "#FF5555" }}>
                   ₹{cashBalance.toFixed(2)}
                 </td>
-                <td
-                  style={{
-                    color: onlineBalance >= 0 ? "#00FF88" : "#FF5555",
-                    fontWeight: "600",
-                  }}
-                >
+                <td style={{ color: onlineBalance >= 0 ? "#00FF88" : "#FF5555" }}>
                   ₹{onlineBalance.toFixed(2)}
                 </td>
-                <td
-                  style={{
-                    color: balance >= 0 ? "#00FF88" : "#FF5555",
-                    fontWeight: "700",
-                    fontSize: "1.1rem",
-                  }}
-                >
+                <td style={{ color: balance >= 0 ? "#00FF88" : "#FF5555" }}>
                   ₹{balance.toFixed(2)}
                 </td>
               </tr>
@@ -399,10 +288,7 @@ const ExpensesPage = () => {
             <button className="add-expense-btn" onClick={() => setShowForm(true)}>
               + Add Expense
             </button>
-            <button
-              className="add-expense-btn"
-              onClick={() => setShowIncomeForm(true)}
-            >
+            <button className="add-expense-btn" onClick={() => setShowIncomeForm(true)}>
               + Add Income
             </button>
           </div>
@@ -440,35 +326,26 @@ const ExpensesPage = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredExpenses.map((exp) => (
-                <tr key={exp._id}>
-                  <td>{exp.date}</td>
-                  <td style={{ color: "#ffd700" }}>₹{exp.amount.toFixed(2)}</td>
-                  <td>{exp.category}</td>
-                  <td>{exp.description}</td>
-                  <td>{exp.payment}</td>
-                  <td>
-                    <button
-                      className="table-btn edit"
-                      onClick={() => handleEdit(exp)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="table-btn delete"
-                      onClick={() => handleDelete(exp._id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {filteredExpenses.length === 0 && (
-                <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
-                    No expenses yet.
-                  </td>
-                </tr>
+              {filteredExpenses.length ? (
+                filteredExpenses.map((exp) => (
+                  <tr key={exp._id}>
+                    <td>{exp.date}</td>
+                    <td style={{ color: "#ffd700" }}>₹{exp.amount.toFixed(2)}</td>
+                    <td>{exp.category}</td>
+                    <td>{exp.description}</td>
+                    <td>{exp.payment}</td>
+                    <td>
+                      <button className="table-btn edit" onClick={() => handleEdit(exp)}>
+                        Edit
+                      </button>
+                      <button className="table-btn delete" onClick={() => handleDelete(exp._id)}>
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr><td colSpan="6" style={{ textAlign: "center" }}>No expenses yet.</td></tr>
               )}
             </tbody>
           </table>
@@ -476,7 +353,7 @@ const ExpensesPage = () => {
 
         {/* Income Table */}
         <div className="card" style={{ marginTop: "30px" }}>
-          <h2 style={{ color: "#FFD700", marginBottom: "10px" }}>Incomes</h2>
+          <h2 style={{ color: "#FFD700" }}>Incomes</h2>
           <table className="expense-list-table">
             <thead>
               <tr>
@@ -489,35 +366,22 @@ const ExpensesPage = () => {
               </tr>
             </thead>
             <tbody>
-              {incomes.map((inc) => (
-                <tr key={inc._id}>
-                  <td>{inc.date}</td>
-                  <td style={{ color: "#00ff88" }}>₹{inc.amount.toFixed(2)}</td>
-                  <td>{inc.source}</td>
-                  <td>{inc.description}</td>
-                  <td>{inc.payment}</td>
-                  <td>
-                    <button
-                      className="table-btn edit"
-                      onClick={() => handleEditIncome(inc)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="table-btn delete"
-                      onClick={() => handleDeleteIncome(inc._id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {incomes.length === 0 && (
-                <tr>
-                  <td colSpan="6" style={{ textAlign: "center", padding: "1rem" }}>
-                    No incomes added yet.
-                  </td>
-                </tr>
+              {incomes.length ? (
+                incomes.map((inc) => (
+                  <tr key={inc._id}>
+                    <td>{inc.date}</td>
+                    <td style={{ color: "#00ff88" }}>₹{inc.amount.toFixed(2)}</td>
+                    <td>{inc.source}</td>
+                    <td>{inc.description}</td>
+                    <td>{inc.payment}</td>
+                    <td>
+                      <button className="table-btn edit" onClick={() => handleEditIncome(inc)}>Edit</button>
+                      <button className="table-btn delete" onClick={() => handleDeleteIncome(inc._id)}>Delete</button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr><td colSpan="6" style={{ textAlign: "center" }}>No incomes yet.</td></tr>
               )}
             </tbody>
           </table>
@@ -528,69 +392,32 @@ const ExpensesPage = () => {
           <div className="overlay">
             <div className="modal fade-in">
               <h2>{isEditing ? "Edit Expense" : "Add Expense"}</h2>
-              <div className="form-group">
-                <label>Date</label>
-                <input
-                  type="date"
-                  value={newExpense.date}
-                  onChange={(e) =>
-                    setNewExpense({ ...newExpense, date: e.target.value })
-                  }
-                />
+              <div className="form-group"><label>Date</label>
+                <input type="date" value={newExpense.date} onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value })} />
               </div>
-              <div className="form-group">
-                <label>Amount</label>
-                <input
-                  type="number"
-                  value={newExpense.amount}
-                  onChange={(e) =>
-                    setNewExpense({ ...newExpense, amount: e.target.value })
-                  }
-                />
+              <div className="form-group"><label>Amount</label>
+                <input type="number" value={newExpense.amount} onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })} />
               </div>
-              <div className="form-group">
-                <label>Category</label>
-                <select
-                  value={newExpense.category}
-                  onChange={(e) =>
-                    setNewExpense({ ...newExpense, category: e.target.value })
-                  }
-                >
+              <div className="form-group"><label>Category</label>
+                <select value={newExpense.category} onChange={(e) => setNewExpense({ ...newExpense, category: e.target.value })}>
                   <option value="Food">Food</option>
                   <option value="Travel">Travel</option>
                   <option value="Shopping">Shopping</option>
                   <option value="Entertainment">Entertainment</option>
                 </select>
               </div>
-              <div className="form-group">
-                <label>Description</label>
-                <input
-                  type="text"
-                  value={newExpense.description}
-                  onChange={(e) =>
-                    setNewExpense({ ...newExpense, description: e.target.value })
-                  }
-                />
+              <div className="form-group"><label>Description</label>
+                <input type="text" value={newExpense.description} onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })} />
               </div>
-              <div className="form-group">
-                <label>Payment</label>
-                <select
-                  value={newExpense.payment}
-                  onChange={(e) =>
-                    setNewExpense({ ...newExpense, payment: e.target.value })
-                  }
-                >
+              <div className="form-group"><label>Payment</label>
+                <select value={newExpense.payment} onChange={(e) => setNewExpense({ ...newExpense, payment: e.target.value })}>
                   <option value="Cash">Cash</option>
                   <option value="Online">Online</option>
                 </select>
               </div>
               <div className="button-row">
-                <button className="submit-btn" onClick={handleAddOrEditExpense}>
-                  {isEditing ? "Update" : "Add"}
-                </button>
-                <button className="cancel-btn" onClick={() => setShowForm(false)}>
-                  Cancel
-                </button>
+                <button className="submit-btn" onClick={handleAddOrEditExpense}>{isEditing ? "Update" : "Add"}</button>
+                <button className="cancel-btn" onClick={() => setShowForm(false)}>Cancel</button>
               </div>
             </div>
           </div>
@@ -600,73 +427,28 @@ const ExpensesPage = () => {
         {showIncomeForm && (
           <div className="overlay">
             <div className="modal fade-in">
-              <h2>Add New Income</h2>
-              <div className="form-group">
-                <label>Date</label>
-                <input
-                  type="date"
-                  value={newIncome.date}
-                  onChange={(e) =>
-                    setNewIncome({ ...newIncome, date: e.target.value })
-                  }
-                />
+              <h2>{isEditingIncome ? "Edit Income" : "Add Income"}</h2>
+              <div className="form-group"><label>Date</label>
+                <input type="date" value={newIncome.date} onChange={(e) => setNewIncome({ ...newIncome, date: e.target.value })} />
               </div>
-              <div className="form-group">
-                <label>Amount</label>
-                <input
-                  type="number"
-                  value={newIncome.amount}
-                  onChange={(e) =>
-                    setNewIncome({ ...newIncome, amount: e.target.value })
-                  }
-                />
+              <div className="form-group"><label>Amount</label>
+                <input type="number" value={newIncome.amount} onChange={(e) => setNewIncome({ ...newIncome, amount: e.target.value })} />
               </div>
-              <div className="form-group">
-                <label>Source</label>
-                <input
-                  type="text"
-                  value={newIncome.source}
-                  onChange={(e) =>
-                    setNewIncome({ ...newIncome, source: e.target.value })
-                  }
-                  placeholder="e.g., Salary, Bonus"
-                />
+              <div className="form-group"><label>Source</label>
+                <input type="text" value={newIncome.source} onChange={(e) => setNewIncome({ ...newIncome, source: e.target.value })} placeholder="e.g., Salary, Bonus" />
               </div>
-              <div className="form-group">
-                <label>Description</label>
-                <input
-                  type="text"
-                  value={newIncome.description}
-                  onChange={(e) =>
-                    setNewIncome({
-                      ...newIncome,
-                      description: e.target.value,
-                    })
-                  }
-                />
+              <div className="form-group"><label>Description</label>
+                <input type="text" value={newIncome.description} onChange={(e) => setNewIncome({ ...newIncome, description: e.target.value })} />
               </div>
-              <div className="form-group">
-                <label>Payment</label>
-                <select
-                  value={newIncome.payment}
-                  onChange={(e) =>
-                    setNewIncome({ ...newIncome, payment: e.target.value })
-                  }
-                >
+              <div className="form-group"><label>Payment</label>
+                <select value={newIncome.payment} onChange={(e) => setNewIncome({ ...newIncome, payment: e.target.value })}>
                   <option value="Cash">Cash</option>
                   <option value="Online">Online</option>
                 </select>
               </div>
               <div className="button-row">
-                <button className="submit-btn" onClick={handleAddIncome}>
-                  Add Income
-                </button>
-                <button
-                  className="cancel-btn"
-                  onClick={() => setShowIncomeForm(false)}
-                >
-                  Cancel
-                </button>
+                <button className="submit-btn" onClick={handleAddIncome}>{isEditingIncome ? "Update" : "Add"}</button>
+                <button className="cancel-btn" onClick={() => setShowIncomeForm(false)}>Cancel</button>
               </div>
             </div>
           </div>

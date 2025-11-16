@@ -3,146 +3,209 @@ import React from "react";
 const About = () => {
   return (
     <div style={styles.page}>
-      <h1 style={styles.title}>About Us</h1>
-
-      <p style={styles.intro}>
-        Welcome to <span style={styles.brand}>Expense Tracker</span> — your
-        all-in-one tool to record, manage, and analyze your daily expenses
-        efficiently.
+      {/* HEADER */}
+      <h1 style={styles.title}>About Expense Tracker</h1>
+      <p style={styles.subtitle}>
+        A modern way to manage, visualize, and understand your finances.
       </p>
 
+      {/* MISSION + VISION */}
       <div style={styles.grid}>
         <div style={styles.card}>
           <h2 style={styles.cardTitle}>🎯 Our Mission</h2>
           <p style={styles.cardText}>
-            We aim to help individuals and small businesses take control of
-            their finances through simple, visual, and interactive tools —
-            making expense tracking effortless and insightful.
+            To simplify financial management by providing a clean, intuitive,
+            and powerful tool that helps you track expenses effortlessly and
+            make smarter financial decisions.
           </p>
         </div>
 
         <div style={styles.card}>
           <h2 style={styles.cardTitle}>🚀 Our Vision</h2>
           <p style={styles.cardText}>
-            To create a smarter way to manage money by combining technology,
-            simplicity, and design — empowering users to make better financial
-            decisions.
+            To empower every individual with insights, clarity, and control
+            over their money — all through elegant UI and smart analytics.
           </p>
         </div>
       </div>
 
-      <div style={styles.features}>
-        <h2 style={styles.sectionTitle}>💡 Key Features</h2>
-        <ul style={styles.featureList}>
-          <li>Easy-to-use expense input and editing</li>
-          <li>Automatic calculation of total spend</li>
-          <li>Dynamic report charts using Recharts</li>
-          <li>Responsive design for all devices</li>
-          <li>Secure and local data storage</li>
-        </ul>
+      {/* FEATURE HIGHLIGHTS */}
+      <div style={styles.section}>
+        <h2 style={styles.sectionTitle}>💡 What Makes Us Unique?</h2>
+
+        <div style={styles.featureGrid}>
+          <div style={styles.featureCard}>
+            <h3 style={styles.featureTitle}>📊 Smart Reports</h3>
+            <p style={styles.featureText}>
+              Visualize monthly and category spending with beautifully designed
+              charts powered by Recharts.
+            </p>
+          </div>
+
+          <div style={styles.featureCard}>
+            <h3 style={styles.featureTitle}>💰 Track Income + Expense</h3>
+            <p style={styles.featureText}>
+              Manage both income and expenses with real-time balance insights.
+            </p>
+          </div>
+
+          <div style={styles.featureCard}>
+            <h3 style={styles.featureTitle}>⚡ Fast & Responsive</h3>
+            <p style={styles.featureText}>
+              Built with React, Node.js, and MongoDB for a seamless and
+              responsive experience.
+            </p>
+          </div>
+
+          <div style={styles.featureCard}>
+            <h3 style={styles.featureTitle}>🛡 Secure Data</h3>
+            <p style={styles.featureText}>
+              Your financial data is stored safely and protected from
+              unauthorized access.
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div style={styles.team}>
-        <h2 style={styles.sectionTitle}>👥 Meet the Team</h2>
+      {/* TEAM SECTION */}
+      <div style={styles.section}>
+        <h2 style={styles.sectionTitle}>👥 Who We Are</h2>
         <p style={styles.cardText}>
-          Built by passionate web developers who believe that managing finances
-          should be easy, transparent, and stress-free.
+          Expense Tracker was developed by dedicated and passionate web
+          developers who believe financial clarity should be simple, elegant,
+          and accessible for everyone.
         </p>
+
+        <div style={styles.teamBadge}>
+          <span>💻 Full Stack Developers</span>
+        </div>
       </div>
 
+      {/* FOOTER */}
       <div style={styles.footer}>
-        © {new Date().getFullYear()} Expense Tracker | All Rights Reserved
+        © {new Date().getFullYear()} Expense Tracker — Built with ❤️ and Code
       </div>
     </div>
   );
 };
 
-// 🎨 Same dark theme and font as the Reports page
+/* 🎨 Stylish dark theme + gold UI */
 const styles = {
   page: {
     maxWidth: "900px",
     margin: "40px auto",
     padding: "40px",
-    backgroundColor: "#1e1e2f", // dark background
+    background: "linear-gradient(135deg,#0f0f0f,#1a1a1a)",
     borderRadius: "20px",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.4)",
-    border: "1px solid rgba(255,255,255,0.1)",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
     fontFamily: "Poppins, sans-serif",
-    color: "#f1f1f1",
+    color: "#e5e5e5",
+    border: "1px solid rgba(255,215,0,0.15)",
   },
+
   title: {
-    fontSize: "36px",
+    fontSize: "38px",
     fontWeight: "700",
     textAlign: "center",
-    color: "#ffd700", // gold accent
-    marginBottom: "24px",
+    color: "#FFD700",
+    marginBottom: "10px",
   },
-  intro: {
-    color: "#d1d5db",
+
+  subtitle: {
     fontSize: "18px",
+    color: "#bbbbbb",
     textAlign: "center",
-    lineHeight: "1.6",
     marginBottom: "40px",
   },
-  brand: {
-    fontWeight: "600",
-    color: "#00bcd4", // cyan accent
-  },
+
+  /* Mission + Vision Grid */
   grid: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-    gap: "24px",
+    gap: "25px",
     marginBottom: "40px",
   },
+
   card: {
-    backgroundColor: "rgba(255,255,255,0.05)",
-    padding: "24px",
+    background: "rgba(255,255,255,0.05)",
+    padding: "25px",
     borderRadius: "16px",
-    backdropFilter: "blur(10px)",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
-    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+    border: "1px solid rgba(255,215,0,0.1)",
+    backdropFilter: "blur(6px)",
+    transition: "0.3s",
   },
+
   cardTitle: {
+    color: "#FFD700",
     fontSize: "22px",
-    fontWeight: "600",
-    color: "#ffd700",
     marginBottom: "10px",
   },
+
   cardText: {
-    color: "#d1d5db",
-    lineHeight: "1.7",
     fontSize: "16px",
+    lineHeight: "1.7",
+    color: "#cccccc",
   },
-  features: {
-    marginTop: "40px",
-    textAlign: "center",
+
+  /* Feature Section */
+  section: {
+    marginTop: "50px",
   },
+
   sectionTitle: {
-    fontSize: "24px",
+    fontSize: "26px",
+    textAlign: "center",
     fontWeight: "600",
-    color: "#ffd700",
-    marginBottom: "16px",
+    color: "#FFD700",
+    marginBottom: "20px",
   },
-  featureList: {
-    listStyleType: "disc",
-    listStylePosition: "inside",
-    color: "#cbd5e1",
-    textAlign: "left",
-    margin: "0 auto",
-    maxWidth: "500px",
-    lineHeight: "1.8",
+
+  featureGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+    gap: "20px",
   },
-  team: {
-    marginTop: "40px",
-    textAlign: "center",
+
+  featureCard: {
+    background: "rgba(255,255,255,0.06)",
+    border: "1px solid rgba(255,215,0,0.1)",
+    padding: "20px",
+    borderRadius: "14px",
+    transition: "0.3s",
   },
+
+  featureTitle: {
+    color: "#00E0A8",
+    fontSize: "18px",
+    fontWeight: "600",
+    marginBottom: "8px",
+  },
+
+  featureText: {
+    fontSize: "15px",
+    color: "#d5d5d5",
+  },
+
+  /* Team Section */
+  teamBadge: {
+    marginTop: "20px",
+    display: "inline-block",
+    padding: "10px 20px",
+    borderRadius: "25px",
+    background: "rgba(255,215,0,0.1)",
+    border: "1px solid rgba(255,215,0,0.3)",
+    fontWeight: "600",
+    color: "#FFD700",
+  },
+
+  /* Footer */
   footer: {
-    marginTop: "40px",
+    marginTop: "50px",
     textAlign: "center",
-    color: "#9ca3af",
     fontSize: "14px",
-    borderTop: "1px solid rgba(255,255,255,0.1)",
-    paddingTop: "12px",
+    color: "#aaaaaa",
+    paddingTop: "15px",
+    borderTop: "1px solid rgba(255,255,255,0.08)",
   },
 };
 
